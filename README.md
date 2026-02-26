@@ -266,9 +266,3 @@ Additional acknowledgments:
 ## 🌟 Show your support
 
 Give a ⭐️ if this project helped you!
-
----
-
-**Made with ❤️ by [Charith Wickramasinghe](https://github.com/charith-codex)**
-
-> This project was built following the comprehensive tutorial by GreatStack. Check out their amazing content for more full-stack development tutorials!
