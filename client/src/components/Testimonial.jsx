@@ -37,7 +37,7 @@ const StarRating = ({ rating }) => {
         <svg
           key={index}
           className={`w-5 h-5 ${
-            index < rating ? "text-purple-500" : "text-gray-300"
+            index < rating ? "text-[#9234EA]" : "text-gray-300"
           }`}
           fill="currentColor"
           viewBox="0 0 22 20"

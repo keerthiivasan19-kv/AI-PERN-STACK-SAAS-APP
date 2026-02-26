@@ -1,32 +1,49 @@
 import React, { useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { dummyCreationData } from "../assets/assets";
 import { Gem, Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Protect, useAuth } from "@clerk/clerk-react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import CreationItem from "../components/CreationItem";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = API_URL;
 
 const Dashboard = () => {
   const [creations, setCreations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [planValue, setPlanValue] = useState(null);
 
   const { getToken } = useAuth();
+  const { user } = useUser();
+
+  const planLabel =
+    String(planValue || user?.publicMetadata?.plan || "free").toLowerCase() ===
+    "premium"
+      ? "Premium"
+      : "Free";
 
   const getDashboardData = async () => {
     try {
-      const { data } = await axios.get("/api/user/get-user-creations", {
-        headers: {
-          Authorization: `Bearer ${await getToken()}`,
-        },
-      });
+      const token = await getToken();
 
-      if (data.success) {
-        setCreations(data.creations);
+      const [creationsRes, usageRes] = await Promise.all([
+        axios.get("/api/user/get-user-creations", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get("/api/user/get-usage", {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
+
+      if (creationsRes.data?.success) {
+        setCreations(creationsRes.data.creations);
       } else {
-        toast.error(data.message);
+        toast.error(creationsRes.data?.message);
+      }
+
+      if (usageRes.data?.success) {
+        setPlanValue(usageRes.data.plan);
       }
     } catch (error) {
       toast.error(error.message);
@@ -55,11 +72,7 @@ const Dashboard = () => {
         <div className="flex justify-between items-center w-72 p-4 px-5 bg-white rounded-xl border border-gray-200">
           <div className="text-slate-600">
             <p className="text-sm">Active Plan</p>
-            <h2 className="text-xl font-semibold">
-              <Protect plan="premium" fallback="Free">
-                Premium
-              </Protect>
-            </h2>
+            <h2 className="text-xl font-semibold">{planLabel}</h2>
           </div>
           <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#FF61C5] to-[#9E53EE] text-white flex justify-center items-center">
             <Gem className="w-5 text-white" />

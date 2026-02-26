@@ -19,9 +19,9 @@ const Footer = () => {
                 <img
                   src={assets.logo}
                   className="h-8 w-auto transition-transform hover:scale-105"
-                  alt="Zebra AI logo"
+                  alt="ACK's AI logo"
                 />
-                <h2 className="text-2xl font-bold">Zebra AI</h2>
+                <h2 className="text-2xl font-bold">ACK's AI</h2>
               </div>
 
               <p className="text-gray-300 max-w-md text-left sm:text-right">
@@ -36,7 +36,7 @@ const Footer = () => {
         <div className="border-t border-gray-700 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              © 2025 Zebra AI. All rights reserved.
+              © 2025 ACK's AI. All rights reserved.
             </p>
             <div className="flex gap-6">
               <a

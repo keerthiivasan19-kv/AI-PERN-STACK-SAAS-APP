@@ -1,4 +1,4 @@
-import { Protect, useClerk, useUser } from "@clerk/clerk-react";
+import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
 import {
   Eraser,
   FileText,
@@ -10,8 +10,12 @@ import {
   SquarePen,
   Users,
 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import axios from "axios";
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = API_URL;
 
 const navItems = [
   { to: "/ai", label: "Dashboard", Icon: House },
@@ -26,7 +30,33 @@ const navItems = [
 
 const Sidebar = ({ sidebar, setSidebar }) => {
   const { user } = useUser();
+  const { getToken } = useAuth();
   const { signOut, openUserProfile } = useClerk();
+  const [planValue, setPlanValue] = useState(null);
+
+  useEffect(() => {
+    const loadPlan = async () => {
+      if (!user) return;
+      try {
+        const { data } = await axios.get("/api/user/get-usage", {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        });
+        if (data?.success) setPlanValue(data.plan);
+      } catch (error) {
+        // ignore and fall back to Clerk metadata
+      }
+    };
+
+    loadPlan();
+  }, [user]);
+
+  const planLabel =
+    String(planValue || user?.publicMetadata?.plan || "free").toLowerCase() ===
+    "premium"
+      ? "Premium"
+      : "Free";
 
   return (
     <div
@@ -81,10 +111,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
               {user.fullName}
             </h1>
             <p className="text-xs text-gray-500">
-              <Protect plan="premium" fallback="Free">
-                Premium
-              </Protect>
-              Plan
+              {planLabel} Plan
             </p>
           </div>
         </div>

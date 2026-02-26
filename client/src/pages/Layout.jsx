@@ -22,7 +22,7 @@ const Layout = () => {
             alt="logo"
             className="h-8 w-auto transition-transform hover:scale-105"
           />
-          Zebra AI
+          ACK's AI
         </div>
         <div className="sm:hidden">
           {sidebar ? (

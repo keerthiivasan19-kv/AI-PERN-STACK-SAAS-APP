@@ -26,9 +26,14 @@ const AiTools = () => {
             onClick={() => user && navigate(tool.path)}
           >
             <div className="mb-6">
-              <tool.Icon className="w-12 h-12 p-3 text-white rounded-xl" style={{background: `linear-gradient(to bottom, ${tool.bg.from}, ${tool.bg.to})`}} />
+              <tool.Icon
+                className="w-12 h-12 p-3 text-white rounded-xl"
+                style={{
+                  background: `linear-gradient(to bottom, ${tool.bg.from}, ${tool.bg.to})`,
+                }}
+              />
             </div>
-            <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-purple-700 transition-colors duration-300">
+            <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-[#9234EA] transition-colors duration-300">
               {tool.title}
             </h3>
             <p className="text-gray-600 leading-relaxed">{tool.description}</p>

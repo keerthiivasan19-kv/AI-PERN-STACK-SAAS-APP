@@ -5,7 +5,8 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = API_URL;
 
 const BlogTitles = () => {
   const blogCategories = [
@@ -31,11 +32,12 @@ const BlogTitles = () => {
 
     try {
       setLoading(true);
-      const prompt = `Only list 5 blog titles under 6 words for the keyword ${input} in the category ${selectedCategory}, as bullet points, without any other text.`;
-
       const { data } = await axios.post(
         "/api/ai/generate-blog-title",
-        { prompt },
+        {
+          keyword: input,
+          category: selectedCategory,
+        },
         {
           headers: {
             Authorization: `Bearer ${await getToken()}`,
@@ -49,7 +51,9 @@ const BlogTitles = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Request failed"
+      );
     }
     setLoading(false);
   };

@@ -1,4 +1,4 @@
-# Zebra AI - AI-Powered SaaS Platform
+# ACK's AI - AI-Powered SaaS Platform
 
 <img width="1777" height="907" alt="image" src="https://github.com/user-attachments/assets/122df56d-8222-42bd-8016-4fbb0a228cf6" />
 

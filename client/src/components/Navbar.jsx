@@ -10,9 +10,9 @@ const Navbar = () => {
   const { openSignIn } = useClerk();
 
   return (
-    <nav className="fixed z-5 w-full backdrop-blur-2xl flex justify-between items-center py-5 px-4 sm:px-20 xl:px-32">
+    <nav className="fixed z-50 w-full bg-white/80 backdrop-blur-xl border-b border-slate-100 flex justify-between items-center py-4 px-4 sm:px-20 xl:px-32">
       <div
-        className="flex gap-2 items-center text-slate-700 font-extrabold cursor-pointer px-10"
+        className="flex gap-2 items-center text-slate-700 font-extrabold cursor-pointer"
         onClick={() => navigate("/")}
       >
         <img
@@ -20,17 +20,17 @@ const Navbar = () => {
           className="h-8 w-auto cursor-pointer transition-transform hover:scale-105"
           alt="logo"
         />
-        <h1 className="text-xl">Zebra AI</h1>
+        <h1 className="text-xl">ACK's AI</h1>
       </div>
 
       {user ? (
-        <div className="px-10">
+        <div>
           <UserButton />
         </div>
       ) : (
         <button
           onClick={openSignIn}
-          className="flex items-center cursor-pointer gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2.5 rounded-full font-medium text-sm hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="flex items-center cursor-pointer gap-2 bg-gradient-to-r from-[#3C81F6] to-[#9234EA] text-white px-6 py-2.5 rounded-full font-medium text-sm hover:opacity-90 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
         >
           Get Started
           <ArrowRight className="w-4 h-4" />

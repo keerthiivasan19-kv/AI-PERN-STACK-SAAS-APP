@@ -5,7 +5,8 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import Markdown from "react-markdown";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = API_URL;
 
 const ReviewResume = () => {
   const [input, setInput] = useState("");
@@ -35,7 +36,9 @@ const ReviewResume = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Request failed"
+      );
     }
     setLoading(false);
   };

@@ -1,10 +1,11 @@
 import { Image, Sparkles, Download } from "lucide-react";
-import React, { useState } from "react";
-import { useAuth } from "@clerk/clerk-react";
+import React, { useEffect, useState } from "react";
+import { useAuth, useUser } from "@clerk/clerk-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+axios.defaults.baseURL = API_URL;
 
 const GenerateImages = () => {
   const imageStyle = [
@@ -25,6 +26,35 @@ const GenerateImages = () => {
   const [content, setContent] = useState("");
 
   const { getToken } = useAuth();
+  const { user } = useUser();
+  const [planValue, setPlanValue] = useState(null);
+
+  const isPremium =
+    String(planValue || user?.publicMetadata?.plan || "free").toLowerCase() ===
+    "premium";
+
+  useEffect(() => {
+    const loadPlan = async () => {
+      if (!user) return;
+      try {
+        const { data } = await axios.get("/api/user/get-usage", {
+          headers: {
+            Authorization: `Bearer ${await getToken()}`,
+          },
+        });
+        if (data?.success) setPlanValue(data.plan);
+      } catch {
+        // ignore and fall back to Clerk metadata
+      }
+    };
+    loadPlan();
+  }, [user]);
+
+  useEffect(() => {
+    if (!isPremium && publish) {
+      setPublish(false);
+    }
+  }, [isPremium, publish]);
 
   const onSubmitHandler = async (e) => {
     e.preventDefault();
@@ -49,26 +79,42 @@ const GenerateImages = () => {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(
+        error?.response?.data?.message || error.message || "Request failed"
+      );
     }
     setLoading(false);
   };
+
+  const isDataUrl = content?.startsWith("data:image");
 
   const downloadImage = async () => {
     if (!content) return;
 
     try {
-      const response = await fetch(content);
-      const blob = await response.blob();
-
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `generated-image-${Date.now()}.png`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
+      if (isDataUrl) {
+        const link = document.createElement("a");
+        link.href = content;
+        link.download = `generated-image-${Date.now()}.png`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      } else {
+        try {
+          const response = await fetch(content);
+          const blob = await response.blob();
+          const url = window.URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `generated-image-${Date.now()}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        } catch (err) {
+          window.open(content, "_blank");
+        }
+      }
 
       toast.success("Image downloaded successfully!");
     } catch (error) {
@@ -119,17 +165,27 @@ const GenerateImages = () => {
         </div>
 
         <div className="my-6 flex items-center gap-2">
-          <label className="relative cursor-pointer">
+          <label
+            className={`relative ${isPremium ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
+          >
             <input
               type="checkbox"
               onChange={(e) => setPublish(e.target.checked)}
               checked={publish}
+              disabled={!isPremium}
               className="sr-only peer"
             />
             <div className="w-9 h-5 rounded-full bg-slate-300 peer-checked:bg-green-500 transition"></div>
             <span className="absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition peer-checked:translate-x-4"></span>
           </label>
-          <p className="text-sm">Make this image public</p>
+          <p className="text-sm">
+            Make this image public
+            {!isPremium && (
+              <span className="text-xs text-slate-400 ml-2">
+                Premium only
+              </span>
+            )}
+          </p>
         </div>
 
         <button
@@ -170,7 +226,17 @@ const GenerateImages = () => {
           </div>
         ) : (
           <div className="mt-3 h-full">
-            <img src={content} alt="image" className="w-full h-full" />
+            <img
+              src={content}
+              alt="image"
+              className="w-full h-full"
+              crossOrigin="anonymous"
+              referrerPolicy="no-referrer"
+              onError={(e) => {
+                console.error("Image load error:", e);
+                toast.error("Failed to load image. Try again.");
+              }}
+            />
           </div>
         )}
       </div>
