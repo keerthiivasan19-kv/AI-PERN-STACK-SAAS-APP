@@ -1,6 +1,6 @@
 # ACK's AI - AI-Powered SaaS Platform
 
-<img width="1777" height="907" alt="image" src="https://github.com/user-attachments/assets/122df56d-8222-42bd-8016-4fbb0a228cf6" />
+<img width="1777" height="907" alt="Write Article Preview" src="./docs/images/preview-write-article.png" />
 
 A full-stack AI-powered SaaS application built with the PERN stack (PostgreSQL, Express.js, React, Node.js) that offers various AI tools for content creation and image processing.
 
@@ -25,7 +25,7 @@ A full-stack AI-powered SaaS application built with the PERN stack (PostgreSQL, 
 - **Community Gallery**: Share and discover AI-generated images
 - **Real-time Dashboard**: Track usage and view creation history
 
-  <img width="1676" height="787" alt="image" src="https://github.com/user-attachments/assets/bc3f8daa-c274-4e7e-b417-ef5ab52cb1d9" />
+  <img width="1676" height="787" alt="Generate Image Preview" src="./docs/images/preview-generate-images.png" />
 
 
 ## 🛠️ Tech Stack
